@@ -1,7 +1,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -9,35 +8,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Users {
   id         Int         @id @default(autoincrement())
   username   String      @unique
   password   String
-  categories Category[]  // 1:N з Category
-  sessions   Session[]   // 1:N з Session
+  categories Categories[]  // 1:N з Category
+  sessions   Sessions[]   // 1:N з Session
 }
 
-model Session {
+model Sessions {
   id         Int      @id @default(autoincrement())
   userId     Int
   createdAt  DateTime @default(now())
   endAt      DateTime?
 
-  user       User     @relation(fields: [userId], references: [id])
+  user       Users     @relation(fields: [userId], references: [id])
 }
 
-model Category {
+model Categories {
   id       Int     @id @default(autoincrement())
   name     String
   userId   Int
-  user     User    @relation(fields: [userId], references: [id])
-  words    Word[]  // 1:N з Word
+  user     Users    @relation(fields: [userId], references: [id])
+  words    Words[]  // 1:N з Word
 }
 
-model Word {
+model Words {
   id          Int     @id @default(autoincrement())
   text        String
   translation String
   categoryId  Int
-  category    Category @relation(fields: [categoryId], references: [id])
+
+  category    Categories @relation(fields: [categoryId], references: [id])
 }

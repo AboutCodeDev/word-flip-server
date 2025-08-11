@@ -8,36 +8,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id         Int         @id @default(autoincrement())
-  username   String      @unique
+model User {
+  id         Int        @id @default(autoincrement())
+  email      String     @unique
+  username   String     
   password   String
-  categories Categories[]  // 1:N з Category
-  sessions   Sessions[]   // 1:N з Session
+
+  // relations
+  categories Category[]
+  sessions   Session[]
+
+  @@map("users")
 }
 
-model Sessions {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  createdAt  DateTime @default(now())
-  endAt      DateTime?
+model Category {
+  id     Int    @id @default(autoincrement())
+  name   String
 
-  user       Users     @relation(fields: [userId], references: [id])
+  // FK -> users.id
+  userId Int    @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // relations
+  words  Word[]
+
+  @@index([userId])
+  @@map("categories")
 }
 
-model Categories {
-  id       Int     @id @default(autoincrement())
-  name     String
-  userId   Int
-  user     Users    @relation(fields: [userId], references: [id])
-  words    Words[]  // 1:N з Word
-}
-
-model Words {
-  id          Int     @id @default(autoincrement())
+model Word {
+  id          Int      @id @default(autoincrement())
   text        String
   translation String
-  categoryId  Int
 
-  category    Categories @relation(fields: [categoryId], references: [id])
+  categoryId  Int      @map("category_id")
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+  @@map("words")
 }
+
+model Session {
+  id        Int       @id @default(autoincrement())
+
+  userId    Int       @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  endAt     DateTime?                 @map("end_at")
+
+  @@index([userId])
+  @@map("sessions")
+}
+

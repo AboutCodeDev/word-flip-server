@@ -18,4 +18,6 @@ const verify = (hashedValue, value) =>
     });
   });
 
-export const cryptoService = { hash, verify };
+const generate = (id) => "slmemfsljdbf";
+
+export const cryptoService = { hash, verify, generate };

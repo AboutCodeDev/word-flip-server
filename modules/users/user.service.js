@@ -5,7 +5,9 @@ const create = async (payload, { repo }) => {
 };
 
 const findByEmail = async (email, { repo }) => {
-  return repo.findFirst({ email });
+  return repo.findFirst({
+    where: { email },
+  });
 };
 
 export const userService = ({ db }) => {

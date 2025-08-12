@@ -1,18 +1,24 @@
-const create = async (payload, { repo }) => {
+const create = async ({ name, userId }, { repo }) => {
   const alreadyExist = await repo.findFirst({
-    where: { name: payload.name, userId: payload.userId },
+    where: { name, userId },
   });
-  if (alreadyExist) throw new Error("Current category already exist");
+  if (alreadyExist) throw new Error(`Category ${name} already exist`);
   const newCategory = await repo.create({
-    data: payload,
+    data: { name, userId },
   });
   return newCategory.id;
+};
+
+const getUserCategories = async (userId, { repo }) => {
+  return repo.findMany({
+    where: { userId },
+  });
 };
 
 export const categoryService = ({ db }) => {
   const repo = db["category"];
   return {
     create: (payload) => create(payload, { repo }),
-    findAll: () => findAll(),
+    getUserCategories: (id) => getUserCategories(id, { repo }),
   };
 };
